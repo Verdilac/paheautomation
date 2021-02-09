@@ -14,6 +14,13 @@ searchButton = driver.find_element_by_xpath(
 
 searchButton.click()
 
+driver.implicitly_wait(5)
+
+driver.switch_to.window(driver.window_handles[1])
+driver.close()
+
+driver.switch_to.window(driver.window_handles[0])
+
 
 movielink = driver.find_element_by_xpath(
     '//*[@id="main-content"]/div[1]/div[2]/div/div/ul[1]/li/div[1]/h2/a')
@@ -22,7 +29,7 @@ movielink.click()
 
 
 megalink = driver.find_element_by_xpath(
-    '//*[@id="the-post"]/div/div[2]/div[2]/div/ecfdddbcafbeedab[4]')
+    '//*[@id="the-post"]/div/div[2]/div[2]/div/node[position(10)]')
 
 megalink.click()
 
@@ -51,7 +58,13 @@ downloadlink.click()
 driver.implicitly_wait(6)
 
 
+driver.switch_to.window(driver.window_handles[1])
+driver.implicitly_wait(6)
+
+driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
 finallink = driver.find_element_by_xpath(
     '//*[@id="content"]/div/div/div[1]/div/div[1]/div[3]/center/a')
+
 
 finallink.click()
