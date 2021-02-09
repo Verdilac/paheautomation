@@ -28,24 +28,19 @@ movielink.click()
 driver.implicitly_wait(5)
 
 
+def findmegalink():
+    megalinks = driver.find_elements_by_class_name("shortc-button")
+    required = megalinks[10].get_attribute('outerHTML')
+   
+
+    linkmod1 = required[:16]
+    linkmod2 = linkmod1[1:]
 
 
+    actuallink = driver.find_element_by_xpath(
+        '//*[@id="the-post"]/div/div[2]/div[2]/div/'+linkmod2 + '[10]')
 
-megalinks = driver.find_elements_by_class_name("shortc-button")
+    return actuallink
 
 
-print('---------------------------------')
-
-required = megalinks[10].get_attribute('outerHTML')
-print(required)
-
-linkmod1 = required[:16]
-linkmod2 = linkmod1[1:]
-
-print('------------------------')
-print(linkmod2)
-
-actuallink = driver.find_element_by_xpath(
-    '//*[@id="the-post"]/div/div[2]/div[2]/div/'+linkmod2 + '[10]')
-
-actuallink.click()
+findmegalink().click()
