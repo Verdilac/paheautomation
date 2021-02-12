@@ -23,10 +23,10 @@ def findmegalink():
 
     linkmod1 = required[:17]
     linkmod2 = linkmod1[1:]
-    linkmod2.strip()
+    finallinkmod = linkmod2.strip()
 
     onlymegalinks = driver.find_elements_by_xpath(
-        '//*[@id="the-post"]/div/div[2]/div[2]/div//'+linkmod2 + "[contains(., 'MG')]")
+        '//*[@id="the-post"]/div/div[2]/div[2]/div//'+finallinkmod+"[contains(.,'MG')]")
 
     return onlymegalinks
 
