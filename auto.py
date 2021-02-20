@@ -1,11 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from guppy import hpy
 
 
 h = hpy()
-print(h.heap())
+# print(h.heap())
 
 options = webdriver.ChromeOptions()
 # options.add_argument('headless')
@@ -64,14 +66,18 @@ def findavalableresolutions():
 
 
 def skipagreement():
-    try:
+    print('skipping agreement')
 
+    try:
+        wait = WebDriverWait(driver, 15)
+        agree = wait.until(EC.presence_of_element_located(
+            (By.CLASS_NAME, 'qc-cmp2-consent-info')))
+
+    finally:
         agreement = driver.find_element_by_xpath(
             '//*[@id="qc-cmp2-ui"]/div[2]/div/button[1]')
 
         agreement.click()
-    except NoSuchElementException:
-        return
 
 
 def skipintercelestial():
@@ -113,6 +119,11 @@ for index, item in enumerate(resolutions):
 
 # driver.close()
 
+
+# driver = webdriver.Chrome(
+#     options=options, executable_path=r'C:\WebDrivers\chromedriver.exe')
+# driver.get(requiredmovielink)
+
 requestedreso = input(
     "Enter The Number Assigned To The  Required Resolution: ")
 
@@ -122,7 +133,7 @@ rightlink = findmegalink()
 rightlink[int(requestedreso)-1].click()
 
 
-driver.implicitly_wait(10)
+driver.implicitly_wait(4)
 
 
 skipagreement()
