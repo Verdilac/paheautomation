@@ -24,6 +24,32 @@ driver.get(requiredmovielink)
 
 # Function Definitions
 
+def findtype():
+    # //*[@id="the-post"]/div/p/span[2]/a
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="the-post"]/div/p/span[2]/a[2]'))
+        )
+    except:
+        print('Element not found')
+
+    # tags = []
+    # for element in elements:
+    #     text = element.text
+    #     tags.append(text)
+    check = element.text
+    print(check)
+
+    answer = None
+    if 'TV' in check:
+        answer = True
+    else:
+        answer = False
+
+    return answer
+
+
 def findmegalink():
     megalinks = driver.find_elements_by_class_name("shortc-button")
     required = megalinks[10].get_attribute('outerHTML')
@@ -112,39 +138,40 @@ def skiplinegee():
     print('Requested Mega Url:  '+megaurl)
 
 
-resolutions = findavalableresolutions()
+# Running the execution commands
+tvormov = findtype()
 
-for index, item in enumerate(resolutions):
-    print(item+'--------'+str(index+1))
+if (tvormov):
+    print('its a show')
+else:
+    print('its not a show ')
+# resolutions = findavalableresolutions()
 
-# driver.close()
-
-
-# driver = webdriver.Chrome(
-#     options=options, executable_path=r'C:\WebDrivers\chromedriver.exe')
-# driver.get(requiredmovielink)
-
-requestedreso = input(
-    "Enter The Number Assigned To The  Required Resolution: ")
+# for index, item in enumerate(resolutions):
+#     print(item+'--------'+str(index+1))
 
 
-rightlink = findmegalink()
-
-rightlink[int(requestedreso)-1].click()
-
-
-driver.implicitly_wait(4)
+# requestedreso = input(
+#     "Enter The Number Assigned To The  Required Resolution: ")
 
 
-skipagreement()
+# rightlink = findmegalink()
 
-skipintercelestial()
-
-
-driver.implicitly_wait(6)
+# rightlink[int(requestedreso)-1].click()
 
 
-driver.switch_to.window(driver.window_handles[1])
-driver.implicitly_wait(6)
+# driver.implicitly_wait(4)
 
-skiplinegee()
+
+# skipagreement()
+
+# skipintercelestial()
+
+
+# driver.implicitly_wait(6)
+
+
+# driver.switch_to.window(driver.window_handles[1])
+# driver.implicitly_wait(6)
+
+# skiplinegee()
