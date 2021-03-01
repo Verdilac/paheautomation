@@ -33,21 +33,43 @@ def findtype():
         )
     except:
         print('Element not found')
-
+    finally:
+        elems = driver.find_elements_by_xpath(
+            '//*[@id="the-post"]/div/p/span[2]/a')
     # tags = []
     # for element in elements:
     #     text = element.text
     #     tags.append(text)
-    check = element.text
-    print(check)
 
-    answer = None
-    if 'TV' in check:
-        answer = True
-    else:
-        answer = False
+    answer = False
+    # check = element.text
+    # print(check)
+
+    for elem in elems:
+        check = elem.text
+        if 'TV' in check:
+            answer = True
+
+    # if 'TV' in check:
+    #     answer = True
+    # else:
+    #     answer = False
 
     return answer
+
+
+def showepisodes():
+    episodes = driver.find_elements_by_xpath(
+        '//*[@id="the-post"]/div/div[2]/div[2]/ul/li')
+
+    for epi in episodes:
+        text = epi.text
+        print(text)
+
+    requiredepisode = input('Enter the required Episode:')
+
+    driver.implicitly_wait(5)
+    episodes[int(requiredepisode)-1].click()
 
 
 def findmegalink():
@@ -88,6 +110,29 @@ def findavalableresolutions():
     # print(type(resolutionsettings))
     # print('---------------------')
     # print(resolutionsettings[2])
+    return resolutionsettings
+
+
+def episoderesolutions():
+
+    # driver.implicitly_wait(10)
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="the-post"]/div/div[2]/div[2]/div[1]/div/div/strong[1]'))
+        )
+    except:
+        print('Element not found')
+    finally:
+        allstrongs = driver.find_elements_by_xpath(
+            '//*[@id="the-post"]/div/div[2]/div[2]/div[2]/div/div/strong')
+
+    resolutionsettings = []
+
+    for res in allstrongs:
+        text = res.text
+        resolutionsettings.append(text)
+
     return resolutionsettings
 
 
@@ -141,10 +186,20 @@ def skiplinegee():
 # Running the execution commands
 tvormov = findtype()
 
+
+# checking the functionality of find type keepin for furture tests
 if (tvormov):
     print('its a show')
+    showepisodes()
+    tvresolutions = episoderesolutions()
+
+    for index, item in enumerate(tvresolutions):
+        print(item+'--------'+str(index+1))
+
 else:
     print('its not a show ')
+
+
 # resolutions = findavalableresolutions()
 
 # for index, item in enumerate(resolutions):
