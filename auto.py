@@ -4,6 +4,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from guppy import hpy
+import time
 
 
 h = hpy()
@@ -71,6 +72,8 @@ def showepisodes():
     driver.implicitly_wait(5)
     episodes[int(requiredepisode)-1].click()
 
+    return requiredepisode
+
 
 def findmegalink():
     megalinks = driver.find_elements_by_class_name("shortc-button")
@@ -83,6 +86,21 @@ def findmegalink():
 
     onlymegalinks = driver.find_elements_by_xpath(
         '//*[@id="the-post"]/div/div[2]/div[2]/div//'+modcode+"[contains(.,'MG')]")
+
+    return onlymegalinks
+
+
+def findmegalinkshow():
+    megalinks = driver.find_elements_by_class_name("shortc-button")
+    required = megalinks[2].get_attribute('outerHTML')
+    # print(required)
+
+    modlink1 = required.split(None, 1)
+    code = modlink1[0]
+    modcode = code[1:]
+
+    onlymegalinks = driver.find_elements_by_xpath(
+        '//*[@id="the-post"]/div/div[2]/div[2]/div[2]/div/div//'+modcode+"[contains(.,'MG')]")
 
     return onlymegalinks
 
@@ -113,7 +131,7 @@ def findavalableresolutions():
     return resolutionsettings
 
 
-def episoderesolutions():
+def episoderesolutions(epinum):
 
     # driver.implicitly_wait(10)
     try:
@@ -125,7 +143,7 @@ def episoderesolutions():
         print('Element not found')
     finally:
         allstrongs = driver.find_elements_by_xpath(
-            '//*[@id="the-post"]/div/div[2]/div[2]/div[2]/div/div/strong')
+            '//*[@id="the-post"]/div/div[2]/div[2]/div[' + epinum + ']/div/div/strong')
 
     resolutionsettings = []
 
@@ -187,46 +205,85 @@ def skiplinegee():
 tvormov = findtype()
 
 
+def closelatesttab():
+    time.sleep(5)
+    driver.switch_to.window(driver.window_handles[1])
+    driver.close()
+    driver.switch_to_window(driver.window_handles[0])
+
+
 # checking the functionality of find type keepin for furture tests
 if (tvormov):
     print('its a show')
-    showepisodes()
-    tvresolutions = episoderesolutions()
+    epinum = showepisodes()
+
+    closelatesttab()
+    time.sleep(5)
+    tvresolutions = episoderesolutions(epinum)
 
     for index, item in enumerate(tvresolutions):
         print(item+'--------'+str(index+1))
 
+    megalinks = findmegalinkshow()
+
+    wantedtvres = input(
+        "Enter The Number Assigned To The  Required Resolution: ")
+
+    for link in megalinks:
+        outer = link.get_attribute('outerHTML')
+        print(outer)
+
+    el = driver.find_element_by_xpath(
+        '//*[@id="the-post"]/div/div[2]/div[2]/div[7]/div/div')
+
+    try:
+        waiter = WebDriverWait(driver, 15)
+        li = waiter.until(EC.element_to_be_clickable(megalinks[1]))
+    except:
+        print('el not found')
+    finally:
+        megalinks[1].click()
+
+    # megalinks[int(wantedtvres)-1].click()
+
+    # driver.implicitly_wait(4)
+
+    # skipagreement()
+
+    # skipintercelestial()
+
+    # driver.implicitly_wait(6)
+
+    # driver.switch_to.window(driver.window_handles[1])
+    # driver.implicitly_wait(6)
+
+    # skiplinegee()
+
+
 else:
+
     print('its not a show ')
+    resolutions = findavalableresolutions()
 
+    for index, item in enumerate(resolutions):
+        print(item+'--------'+str(index+1))
 
-# resolutions = findavalableresolutions()
+    requestedreso = input(
+        "Enter The Number Assigned To The  Required Resolution: ")
 
-# for index, item in enumerate(resolutions):
-#     print(item+'--------'+str(index+1))
+    rightlink = findmegalink()
 
+    rightlink[int(requestedreso)-1].click()
 
-# requestedreso = input(
-#     "Enter The Number Assigned To The  Required Resolution: ")
+    driver.implicitly_wait(4)
 
+    skipagreement()
 
-# rightlink = findmegalink()
+    skipintercelestial()
 
-# rightlink[int(requestedreso)-1].click()
+    driver.implicitly_wait(6)
 
+    driver.switch_to.window(driver.window_handles[1])
+    driver.implicitly_wait(6)
 
-# driver.implicitly_wait(4)
-
-
-# skipagreement()
-
-# skipintercelestial()
-
-
-# driver.implicitly_wait(6)
-
-
-# driver.switch_to.window(driver.window_handles[1])
-# driver.implicitly_wait(6)
-
-# skiplinegee()
+    skiplinegee()
