@@ -95,7 +95,7 @@ def findmegalink():
     return onlymegalinks
 
 
-def findmegalinkshow():
+def findmegalinkshow(epinum):
     megalinks = driver.find_elements_by_class_name("shortc-button")
     required = megalinks[2].get_attribute('outerHTML')
     # print(required)
@@ -111,8 +111,10 @@ def findmegalinkshow():
     # by a wrapper element so the element i wanted to interact with was not
     # clickable hence the use of full x paths.
 
+
+    # i also had to implement the episode number in to the full expath 
     fullxmegalinks = driver.find_elements_by_xpath(
-        '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div[7]/div/div//'+modcode+"[contains(.,'MG')]")
+        '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div[' + epinum + ']/div/div//'+modcode+"[contains(.,'MG')]")
 
     return fullxmegalinks
 
@@ -237,7 +239,7 @@ if (tvormov):
     for index, item in enumerate(tvresolutions):
         print(item+'--------'+str(index+1))
 
-    megalinks = findmegalinkshow()
+    megalinks = findmegalinkshow(epinum)
     bl = megalinks[1]
 
     wantedtvres = input(
