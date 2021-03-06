@@ -3,6 +3,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from guppy import hpy
 import time
 
@@ -11,6 +12,7 @@ h = hpy()
 # print(h.heap())
 
 options = webdriver.ChromeOptions()
+options.add_argument("window-size=1200x600")
 # options.add_argument('headless')
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
@@ -20,6 +22,9 @@ requiredmovielink = input('Enter the movie link:')
 
 driver = webdriver.Chrome(
     options=options, executable_path=r'C:\WebDrivers\chromedriver.exe')
+
+driver.maximize_window()
+
 driver.get(requiredmovielink)
 
 
@@ -102,7 +107,14 @@ def findmegalinkshow():
     onlymegalinks = driver.find_elements_by_xpath(
         '//*[@id="the-post"]/div/div[2]/div[2]/div[2]/div/div//'+modcode+"[contains(.,'MG')]")
 
-    return onlymegalinks
+    # i had to take the full xpath because most of the recent episodes were coverd
+    # by a wrapper element so the element i wanted to interact with was not
+    # clickable hence the use of full x paths.
+
+    fullxmegalinks = driver.find_elements_by_xpath(
+        '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div[7]/div/div//'+modcode+"[contains(.,'MG')]")
+
+    return fullxmegalinks
 
 
 def findavalableresolutions():
@@ -162,6 +174,8 @@ def skipagreement():
         agree = wait.until(EC.presence_of_element_located(
             (By.CLASS_NAME, 'qc-cmp2-consent-info')))
 
+    except:
+        print('element not found')
     finally:
         agreement = driver.find_element_by_xpath(
             '//*[@id="qc-cmp2-ui"]/div[2]/div/button[1]')
@@ -206,7 +220,6 @@ tvormov = findtype()
 
 
 def closelatesttab():
-    time.sleep(5)
     driver.switch_to.window(driver.window_handles[1])
     driver.close()
     driver.switch_to_window(driver.window_handles[0])
@@ -225,39 +238,25 @@ if (tvormov):
         print(item+'--------'+str(index+1))
 
     megalinks = findmegalinkshow()
+    bl = megalinks[1]
 
     wantedtvres = input(
         "Enter The Number Assigned To The  Required Resolution: ")
 
-    for link in megalinks:
-        outer = link.get_attribute('outerHTML')
-        print(outer)
+    megalinks[int(wantedtvres)-1].click()
 
-    el = driver.find_element_by_xpath(
-        '//*[@id="the-post"]/div/div[2]/div[2]/div[7]/div/div')
+    driver.implicitly_wait(6)
 
-    try:
-        waiter = WebDriverWait(driver, 15)
-        li = waiter.until(EC.element_to_be_clickable(megalinks[1]))
-    except:
-        print('el not found')
-    finally:
-        megalinks[1].click()
+    skipagreement()
 
-    # megalinks[int(wantedtvres)-1].click()
+    skipintercelestial()
 
-    # driver.implicitly_wait(4)
+    driver.implicitly_wait(6)
 
-    # skipagreement()
+    driver.switch_to.window(driver.window_handles[1])
+    driver.implicitly_wait(6)
 
-    # skipintercelestial()
-
-    # driver.implicitly_wait(6)
-
-    # driver.switch_to.window(driver.window_handles[1])
-    # driver.implicitly_wait(6)
-
-    # skiplinegee()
+    skiplinegee()
 
 
 else:
