@@ -48,6 +48,8 @@ def findtype():
     #     tags.append(text)
 
     answer = False
+    is_Ongoing = False
+
     # check = element.text
     # print(check)
 
@@ -55,13 +57,15 @@ def findtype():
         check = elem.text
         if 'TV' in check:
             answer = True
+        if 'Ongoing' in check:
+            is_Ongoing = True
 
     # if 'TV' in check:
     #     answer = True
     # else:
     #     answer = False
 
-    return answer
+    return answer, is_Ongoing
 
 
 def showepisodes():
@@ -111,8 +115,9 @@ def findmegalinkshow(epinum):
     # by a wrapper element so the element i wanted to interact with was not
     # clickable hence the use of full x paths.
 
-
-    # i also had to implement the episode number in to the full expath 
+    # i also had to implement the episode number in to the full expath
+    # keep in mind since we are using full xpath its not relative so
+    # any sudden changed on the website will need maintatnce on the script
     fullxmegalinks = driver.find_elements_by_xpath(
         '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div[' + epinum + ']/div/div//'+modcode+"[contains(.,'MG')]")
 
@@ -227,38 +232,63 @@ def closelatesttab():
     driver.switch_to_window(driver.window_handles[0])
 
 
+def seasonstack():
+    seasons = driver.find_elements_by_xpath("//li[contains(text(), 'Season')]")
+
+    for s in seasons:
+        t = s.text
+        print(t)
+    requiredseason = input('Enter the Required Season:')
+
+    seasons[1].click()
+
+
 # checking the functionality of find type keepin for furture tests
 if (tvormov):
     print('its a show')
-    epinum = showepisodes()
 
-    closelatesttab()
-    time.sleep(5)
-    tvresolutions = episoderesolutions(epinum)
+    is_Ongoing = False
+    if (tvormov[1]):
+        is_Ongoing = True
+    else:
+        is_Ongoing = False
 
-    for index, item in enumerate(tvresolutions):
-        print(item+'--------'+str(index+1))
+    if not is_Ongoing:
+        seasonstack()
+        closelatesttab()
+    #this is not very used these days 
+    #to be continued
 
-    megalinks = findmegalinkshow(epinum)
-    bl = megalinks[1]
 
-    wantedtvres = input(
-        "Enter The Number Assigned To The  Required Resolution: ")
+    else:
+        epinum = showepisodes()
 
-    megalinks[int(wantedtvres)-1].click()
+        closelatesttab()
+        time.sleep(5)
+        tvresolutions = episoderesolutions(epinum)
 
-    driver.implicitly_wait(6)
+        for index, item in enumerate(tvresolutions):
+            print(item+'--------'+str(index+1))
 
-    skipagreement()
+        megalinks = findmegalinkshow(epinum)
 
-    skipintercelestial()
+        wantedtvres = input(
+            "Enter The Number Assigned To The  Required Resolution: ")
 
-    driver.implicitly_wait(6)
+        megalinks[int(wantedtvres)-1].click()
 
-    driver.switch_to.window(driver.window_handles[1])
-    driver.implicitly_wait(6)
+        driver.implicitly_wait(6)
 
-    skiplinegee()
+        skipagreement()
+
+        skipintercelestial()
+
+        driver.implicitly_wait(6)
+
+        driver.switch_to.window(driver.window_handles[1])
+        driver.implicitly_wait(6)
+
+        skiplinegee()
 
 
 else:
